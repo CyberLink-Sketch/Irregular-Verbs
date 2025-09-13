@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#4a90e2"/>
+  <link rel="manifest" href="manifest.json" />
+  <title>Irregular Verb Patterns</title>
+
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --bg-light: #f0f4ff;
+      --bg-dark: #1a1a1a;
+      --text-light: #333;
+      --text-dark: #eee;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background: var(--bg-light);
+      color: var(--text-light);
+      text-align: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    p.description {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .game-button {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      transition: background 0.3s;
+    }
+
+    .game-button:hover {
+      background: #357ab8;
+    }
+
+    .toggle-container {
+      margin-top: 30px;
+    }
+
+    .donation {
+      margin-top: 50px;
+    }
+
+    .donation img {
+      height: 50px;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      color: gray;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎮 Irregular Verb Patterns</h1>
+  <p class="description">Choose a game to start practicing your verb pattern recognition!</p>
+
+  <div class="button-container">
+    <a class="game-button" href="AllSame.html">🟢 All are the same</a>
+    <a class="game-button" href="PresAndPastPSame.html">🟩 Present and Past Participle are the same</a>
+    <a class="game-button" href="BothPastSame.html">🟨 Both Past and Past Participle are the same</a>
+    <a class="game-button" href="AddN.html">🔵 Present = Past + n</a>
+    <a class="game-button" href="AddEN.html">🔷 Present = Past + en</a>
+    <a class="game-button" href="AddNE.html">🟣 Present = Past + ne</a>
+    <a class="game-button" href="AllDifferent.html">🔺 All are different</a>
+  </div>
+
+  <div class="toggle-container">
+    <label>
+      <input type="checkbox" id="modeToggle" />
+      🌙 Dark Mode
+    </label>
+  </div>
+
+  <div class="donation">
+    <p>If you'd like to support this project:</p>
+    <a href="https://www.buymeacoffee.com/YOURNAME" target="_blank">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
+    </a>
+  </div>
+
+  <footer>
+    Created with ❤️ by CiberLink-Sketch<br>
+    <a href="https://github.com/CyberLink-Sketch/Irregular-Verbs" target="_blank">View on GitHub</a>
+  </footer>
+
+  <script>
+    // Dark mode toggle
+    const toggle = document.getElementById('modeToggle');
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+  </script>
+</body>
+</html>
