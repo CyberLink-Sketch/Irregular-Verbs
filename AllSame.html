@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Verb Conjugation Flashcards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .flashcard {
+            perspective: 1000px;
+            height: 400px;
+            cursor: pointer;
+        }
+        
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+        }
+        
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #2d3748;
+            transform: rotateY(180deg);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .verb-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .verb-table th {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .verb-table td {
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .tab {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .bounce {
+            animation: bounce 1s ease infinite;
+        }
+        
+        .emoji-container {
+            font-size: 120px;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .input-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+        }
+        
+        .input-incorrect {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+        }
+        
+        .input-partial {
+            border-color: #f59e0b !important;
+            background-color: #fef3c7 !important;
+        }
+        
+        .pronunciation {
+            font-style: italic;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        .flip-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .card-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        
+        .emoji-match-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .emoji-match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .emoji-large {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .option-button {
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .option-button:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .option-button.selected {
+            border-color: #667eea;
+            background-color: #eef2ff;
+        }
+        
+        .option-button.correct {
+            border-color: #10b981;
+            background-color: #d1fae5;
+        }
+        
+        .option-button.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+        
+        .mastered-badge {
+            display: inline-block;
+            background-color: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">English Verb Conjugation Flashcards</h1>
+            <p class="text-gray-600">Master irregular verbs with interactive flashcards and tests</p>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <div class="tab active px-4 py-2 text-lg" data-tab="flashcards">Flashcards</div>
+            <div class="tab px-4 py-2 text-lg" data-tab="match">Emoji Match</div>
+            <div class="tab px-4 py-2 text-lg" data-tab="test">Test</div>
+        </div>
+        
+        <!-- Flashcards Tab Content -->
+        <div id="flashcards-content" class="tab-content active">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700 font-medium">Progress: <span id="progress-text">0/12</span></span>
+                    <span class="text-gray-700 font-medium">Score: <span id="score">0</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="flashcard mx-auto mb-8" id="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front p-6 flex flex-col justify-between">
+                        <div class="card-counter">Card <span id="card-number">1</span>/12</div>
+                        <div class="text-center mb-4">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-2" id="verb-name">PUT</h2>
+                            <p class="pronunciation" id="pronunciation">/pʊt/</p>
+                        </div>
+                        
+                        <table class="verb-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-1/4">Base Form</th>
+                                    <th class="w-1/4">Simple Present</th>
+                                    <th class="w-1/4">Simple Past</th>
+                                    <th class="w-1/4">Past Participle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="base-form" class="text-center">put</td>
+                                    <td id="simple-present" class="text-center">put/puts</td>
+                                    <td id="simple-past" class="text-center">put</td>
+                                    <td id="past-participle" class="text-center">put</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="text-center mt-4 mb-8">
+                            <p class="text-sm text-gray-100" id="example-sentence">I put the book on the table yesterday.</p>
+                        </div>
+                        
+                        <div class="flip-hint pulse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                            </svg>
+                            Click to flip
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-counter">Card <span id="back-card-number">1</span>/12</div>
+                        <div class="h-full flex flex-col">
+                            <div class="flex-1 overflow-hidden flex items-center justify-center">
+                                <div id="verb-image-container" class="emoji-container">
+                                    📚
+                                </div>
+                            </div>
+                            <div class="p-4 text-center bg-gray-50">
+                                <p class="text-lg font-medium" id="back-verb-name">PUT</p>
+                                <p class="text-sm text-gray-600 mb-6" id="back-example">I put the book on the table yesterday.</p>
+                                <div class="flip-hint pulse">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                    </svg>
+                                    Click to flip
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center space-x-4">
+                <button id="prev-btn" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <button id="mark-known-btn" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                    I know this!
+                </button>
+                <button id="next-btn" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    Next
+                </button>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button id="reset-btn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                    Reset Progress
+                </button>
+            </div>
+            
+            <div class="mt-8 p-4 bg-white rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">Known Verbs</h2>
+                <div id="known-verbs" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+        
+        <!-- Emoji Match Tab Content -->
+        <div id="match-content" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6">Emoji Verb Match</h2>
+                
+                <div class="mb-4">
+                    <p class="text-gray-700">Match the correct verb forms with each emoji. Select one option from each column.</p>
+                </div>
+                
+                <div id="emoji-match-container" class="grid grid-cols-1 gap-6">
+                    <!-- Emoji match cards will be generated here -->
+                </div>
+                
+                <div class="mt-6 flex justify-between">
+                    <button id="check-matches" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                        Check Matches
+                    </button>
+                    <button id="new-matches" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        New Set
+                    </button>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-700 font-medium">Match Score:</span>
+                        <span class="text-gray-700 font-medium"><span id="match-score">0</span></span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Mastered Verbs</h3>
+                    <div id="mastered-verbs" class="flex flex-wrap gap-2">
+                        <p class="text-gray-500 italic">Complete matches correctly to master verbs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Tab Content -->
+        <div id="test-content" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6">Verb Conjugation Test</h2>
+                
+                <div id="test-container">
+                    <div class="mb-6">
+                        <p class="text-lg font-medium mb-2">Fill in the missing conjugations for: <span id="test-counter">1/12</span></p>
+                        <div class="p-4 bg-indigo-50 rounded-lg">
+                            <div class="flex items-center justify-between mb-4">
+                                <p class="text-xl font-bold" id="test-verb">PUT</p>
+                                <div class="text-2xl" id="test-emoji">📚</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Base Form:</label>
+                                    <input type="text" id="test-base" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter base form...">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Simple Present:</label>
+                                    <input type="text" id="test-present" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter simple present...">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Simple Past:</label>
+                                    <input type="text" id="test-past" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter simple past...">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-1">Past Participle:</label>
+                                    <input type="text" id="test-participle" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Enter past participle...">
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-sm text-gray-600">
+                                <p id="test-example">Example: I put the book on the table yesterday.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="check-answer" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                            Check Answer
+                        </button>
+                        <button id="next-question" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            Next Question
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="test-results" class="mt-6 hidden">
+                    <div class="p-4 rounded-lg" id="result-container">
+                        <p class="text-lg font-medium mb-2" id="result-message"></p>
+                        <div id="corrections" class="mt-2"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-700 font-medium">Test Score:</span>
+                        <span class="text-gray-700 font-medium"><span id="test-score">0</span>/12</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="test-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verb data with conjugations and emoji images
+            const verbs = [
+                {
+                    name: "PUT",
+                    baseForm: "put",
+                    simplePresent: "put/puts",
+                    simplePast: "put",
+                    pastParticiple: "put",
+                    example: "I put the books on the shelf every morning.",
+                    emoji: "📚",
+                    pronunciation: "/pʊt/"
+                },
+                {
+                    name: "READ",
+                    baseForm: "read",
+                    simplePresent: "read/reads",
+                    simplePast: "read",
+                    pastParticiple: "read",
+                    example: "She reads interesting novels every weekend.",
+                    emoji: "📖",
+                    pronunciation: "/riːd/ (present), /rɛd/ (past)"
+                },
+                {
+                    name: "FEEL",
+                    baseForm: "feel",
+                    simplePresent: "feel/feels",
+                    simplePast: "felt",
+                    pastParticiple: "felt",
+                    example: "I feel happy when I'm with my friends.",
+                    emoji: "😊",
+                    pronunciation: "/fiːl/"
+                },
+                {
+                    name: "FIND",
+                    baseForm: "find",
+                    simplePresent: "find/finds",
+                    simplePast: "found",
+                    pastParticiple: "found",
+                    example: "They found the hidden treasure in the cave.",
+                    emoji: "🔍",
+                    pronunciation: "/faɪnd/"
+                },
+                {
+                    name: "GET",
+                    baseForm: "get",
+                    simplePresent: "get/gets",
+                    simplePast: "got",
+                    pastParticiple: "got/gotten",
+                    example: "I get up early to exercise before work.",
+                    emoji: "🏃‍♂️",
+                    pronunciation: "/ɡɛt/"
+                },
+                {
+                    name: "HAVE",
+                    baseForm: "have",
+                    simplePresent: "have/has",
+                    simplePast: "had",
+                    pastParticiple: "had",
+                    example: "She has two cats and a dog at home.",
+                    emoji: "🐱",
+                    pronunciation: "/hæv/"
+                },
+                {
+                    name: "HEAR",
+                    baseForm: "hear",
+                    simplePresent: "hear/hears",
+                    simplePast: "heard",
+                    pastParticiple: "heard",
+                    example: "I can hear beautiful music playing in the distance.",
+                    emoji: "👂",
+                    pronunciation: "/hɪər/"
+                },
+                {
+                    name: "LEAVE",
+                    baseForm: "leave",
+                    simplePresent: "leave/leaves",
+                    simplePast: "left",
+                    pastParticiple: "left",
+                    example: "They leave for vacation tomorrow morning.",
+                    emoji: "🧳",
+                    pronunciation: "/liːv/"
+                },
+                {
+                    name: "MAKE",
+                    baseForm: "make",
+                    simplePresent: "make/makes",
+                    simplePast: "made",
+                    pastParticiple: "made",
+                    example: "My grandmother makes delicious chocolate cookies.",
+                    emoji: "🍪",
+                    pronunciation: "/meɪk/"
+                },
+                {
+                    name: "SAY",
+                    baseForm: "say",
+                    simplePresent: "say/says",
+                    simplePast: "said",
+                    pastParticiple: "said",
+                    example: "He says he will help us with the project.",
+                    emoji: "💬",
+                    pronunciation: "/seɪ/"
+                },
+                {
+                    name: "TELL",
+                    baseForm: "tell",
+                    simplePresent: "tell/tells",
+                    simplePast: "told",
+                    pastParticiple: "told",
+                    example: "Please tell me the truth about what happened.",
+                    emoji: "🗣️",
+                    pronunciation: "/tɛl/"
+                },
+                {
+                    name: "THINK",
+                    baseForm: "think",
+                    simplePresent: "think/thinks",
+                    simplePast: "thought",
+                    pastParticiple: "thought",
+                    example: "I think we should try a different approach.",
+                    emoji: "🤔",
+                    pronunciation: "/θɪŋk/"
+                }
+            ];
+            
+            let currentCardIndex = 0;
+            let score = 0;
+            let knownCards = new Set();
+            let testScore = 0;
+            let currentTestIndex = 0;
+            let testVerbs = [...verbs];
+            let matchScore = 0;
+            
+            // Track mastered verbs in the emoji match game
+            let masteredVerbs = new Set();
+            
+            // Track which questions have been answered in the test
+            let answeredQuestions = new Set();
+            
+            // Shuffle the test verbs
+            shuffleArray(testVerbs);
+            
+            // Elements
+            const flashcardElement = document.getElementById('flashcard');
+            const verbNameElement = document.getElementById('verb-name');
+            const backVerbNameElement = document.getElementById('back-verb-name');
+            const baseFormElement = document.getElementById('base-form');
+            const simplePresentElement = document.getElementById('simple-present');
+            const simplePastElement = document.getElementById('simple-past');
+            const pastParticipleElement = document.getElementById('past-participle');
+            const exampleSentenceElement = document.getElementById('example-sentence');
+            const backExampleElement = document.getElementById('back-example');
+            const verbImageContainer = document.getElementById('verb-image-container');
+            const pronunciationElement = document.getElementById('pronunciation');
+            const cardNumberElement = document.getElementById('card-number');
+            const backCardNumberElement = document.getElementById('back-card-number');
+            const prevButton = document.getElementById('prev-btn');
+            const nextButton = document.getElementById('next-btn');
+            const markKnownButton = document.getElementById('mark-known-btn');
+            const resetButton = document.getElementById('reset-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const scoreElement = document.getElementById('score');
+            const knownVerbsElement = document.getElementById('known-verbs');
+            
+            // Test elements
+            const testVerbElement = document.getElementById('test-verb');
+            const testEmojiElement = document.getElementById('test-emoji');
+            const testExampleElement = document.getElementById('test-example');
+            const testCounterElement = document.getElementById('test-counter');
+            const testBaseInput = document.getElementById('test-base');
+            const testPresentInput = document.getElementById('test-present');
+            const testPastInput = document.getElementById('test-past');
+            const testParticipleInput = document.getElementById('test-participle');
+            const checkAnswerButton = document.getElementById('check-answer');
+            const nextQuestionButton = document.getElementById('next-question');
+            const testResultsElement = document.getElementById('test-results');
+            const resultContainerElement = document.getElementById('result-container');
+            const resultMessageElement = document.getElementById('result-message');
+            const correctionsElement = document.getElementById('corrections');
+            const testScoreElement = document.getElementById('test-score');
+            const testProgressBar = document.getElementById('test-progress-bar');
+            
+            // Match elements
+            const emojiMatchContainer = document.getElementById('emoji-match-container');
+            const checkMatchesButton = document.getElementById('check-matches');
+            const newMatchesButton = document.getElementById('new-matches');
+            const matchScoreElement = document.getElementById('match-score');
+            const masteredVerbsElement = document.getElementById('mastered-verbs');
+            
+            // Tab elements
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Functions
+            function updateCard() {
+                const currentVerb = verbs[currentCardIndex];
+                verbNameElement.textContent = currentVerb.name;
+                backVerbNameElement.textContent = currentVerb.name;
+                baseFormElement.textContent = currentVerb.baseForm;
+                simplePresentElement.textContent = currentVerb.simplePresent;
+                simplePastElement.textContent = currentVerb.simplePast;
+                pastParticipleElement.textContent = currentVerb.pastParticiple;
+                exampleSentenceElement.textContent = currentVerb.example;
+                backExampleElement.textContent = currentVerb.example;
+                verbImageContainer.innerHTML = currentVerb.emoji;
+                pronunciationElement.textContent = currentVerb.pronunciation;
+                cardNumberElement.textContent = currentCardIndex + 1;
+                backCardNumberElement.textContent = currentCardIndex + 1;
+                
+                flashcardElement.classList.remove('flipped');
+                updateButtons();
+                updateProgress();
+            }
+            
+            function updateButtons() {
+                prevButton.disabled = currentCardIndex === 0;
+                nextButton.disabled = currentCardIndex === verbs.length - 1;
+                
+                if (knownCards.has(currentCardIndex)) {
+                    markKnownButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    markKnownButton.classList.add('bg-gray-400', 'hover:bg-gray-500');
+                    markKnownButton.textContent = "Already Known";
+                } else {
+                    markKnownButton.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+                    markKnownButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                    markKnownButton.textContent = "I know this!";
+                }
+            }
+            
+            function updateProgress() {
+                const progress = (knownCards.size / verbs.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${knownCards.size}/${verbs.length}`;
+                scoreElement.textContent = score;
+                
+                // Update known verbs display
+                knownVerbsElement.innerHTML = '';
+                knownCards.forEach(index => {
+                    const verbChip = document.createElement('div');
+                    verbChip.className = 'px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm';
+                    verbChip.textContent = verbs[index].name;
+                    knownVerbsElement.appendChild(verbChip);
+                });
+                
+                if (knownCards.size === verbs.length) {
+                    setTimeout(() => {
+                        alert(`Congratulations! You've learned all ${verbs.length} verbs with a score of ${score}!`);
+                    }, 500);
+                }
+            }
+            
+            function updateTestQuestion() {
+                const currentVerb = testVerbs[currentTestIndex];
+                testVerbElement.textContent = currentVerb.name;
+                testEmojiElement.textContent = currentVerb.emoji;
+                testExampleElement.textContent = `Example: ${currentVerb.example}`;
+                testCounterElement.textContent = `${currentTestIndex + 1}/${testVerbs.length}`;
+                
+                // Clear inputs and remove any styling classes
+                testBaseInput.value = '';
+                testPresentInput.value = '';
+                testPastInput.value = '';
+                testParticipleInput.value = '';
+                
+                testBaseInput.className = 'w-full p-2 border border-gray-300 rounded-md';
+                testPresentInput.className = 'w-full p-2 border border-gray-300 rounded-md';
+                testPastInput.className = 'w-full p-2 border border-gray-300 rounded-md';
+                testParticipleInput.className = 'w-full p-2 border border-gray-300 rounded-md';
+                
+                // Hide results
+                testResultsElement.classList.add('hidden');
+                
+                // Remove the "already scored" marker
+                const marker = document.getElementById('already-scored');
+                if (marker) {
+                    marker.remove();
+                }
+                
+                // Update test progress
+                updateTestProgress();
+            }
+            
+            function updateTestProgress() {
+                // Update the progress bar based on the current question index
+                const progress = (currentTestIndex / testVerbs.length) * 100;
+                testProgressBar.style.width = `${progress}%`;
+                
+                // Update the score display
+                testScoreElement.textContent = testScore;
+            }
+            
+            function checkAnswer() {
+                const currentVerb = testVerbs[currentTestIndex];
+                let correctCount = 0;
+                let partialCount = 0;
+                let totalFields = 4;
+                
+                // Check base form
+                const baseInput = testBaseInput.value.trim().toLowerCase();
+                const baseCorrect = baseInput === currentVerb.baseForm.toLowerCase();
+                testBaseInput.className = baseCorrect ? 
+                    'w-full p-2 border rounded-md input-correct' : 
+                    'w-full p-2 border rounded-md input-incorrect';
+                if (baseCorrect) correctCount++;
+                
+                // Check simple present - FIXED to properly recognize forms
+                const presentInput = testPresentInput.value.trim().toLowerCase();
+                
+                // Split the correct answer and user input by slashes and commas
+                const correctPresentForms = currentVerb.simplePresent.toLowerCase().split(/[\/,\s]+/).map(form => form.trim()).filter(Boolean);
+                const userPresentForms = presentInput.split(/[\/,\s]+/).map(form => form.trim()).filter(Boolean);
+                
+                // Check for exact match of any form
+                const presentExactMatch = userPresentForms.some(userForm => 
+                    correctPresentForms.includes(userForm)
+                );
+                
+                // Check for partial match (user entered at least one correct form)
+                const presentPartialMatch = !presentExactMatch && userPresentForms.some(userForm => 
+                    correctPresentForms.some(correctForm => 
+                        correctForm.includes(userForm) || userForm.includes(correctForm)
+                    )
+                );
+                
+                if (presentExactMatch) {
+                    testPresentInput.className = 'w-full p-2 border rounded-md input-correct';
+                    correctCount++;
+                } else if (presentPartialMatch) {
+                    testPresentInput.className = 'w-full p-2 border rounded-md input-partial';
+                    partialCount++;
+                } else {
+                    testPresentInput.className = 'w-full p-2 border rounded-md input-incorrect';
+                }
+                
+                // Check simple past
+                const pastInput = testPastInput.value.trim().toLowerCase();
+                const pastForms = currentVerb.simplePast.toLowerCase().split(/[\/,\s]+/).map(form => form.trim()).filter(Boolean);
+                const pastCorrect = pastForms.includes(pastInput);
+                
+                testPastInput.className = pastCorrect ? 
+                    'w-full p-2 border rounded-md input-correct' : 
+                    'w-full p-2 border rounded-md input-incorrect';
+                if (pastCorrect) correctCount++;
+                
+                // Check past participle
+                const participleInput = testParticipleInput.value.trim().toLowerCase();
+                const participleForms = currentVerb.pastParticiple.toLowerCase().split(/[\/,\s]+/).map(form => form.trim()).filter(Boolean);
+                const participleCorrect = participleForms.includes(participleInput);
+                
+                const participlePartial = !participleCorrect && participleForms.some(form => 
+                    participleInput.includes(form) || form.includes(participleInput)
+                );
+                
+                if (participleCorrect) {
+                    testParticipleInput.className = 'w-full p-2 border rounded-md input-correct';
+                    correctCount++;
+                } else if (participlePartial) {
+                    testParticipleInput.className = 'w-full p-2 border rounded-md input-partial';
+                    partialCount++;
+                } else {
+                    testParticipleInput.className = 'w-full p-2 border rounded-md input-incorrect';
+                }
+                
+                // Show results
+                testResultsElement.classList.remove('hidden');
+                
+                // Calculate score based on correct and partial answers
+                let questionScore = 0;
+                if (correctCount === totalFields) {
+                    questionScore = 1;
+                } else if (correctCount > 0 || partialCount > 0) {
+                    questionScore = 0.5;
+                }
+                
+                // Add to total score if this question hasn't been answered yet
+                if (!answeredQuestions.has(currentTestIndex)) {
+                    testScore += questionScore;
+                    answeredQuestions.add(currentTestIndex);
+                    
+                    // Mark as already scored to prevent double counting
+                    const marker = document.createElement('div');
+                    marker.id = 'already-scored';
+                    marker.style.display = 'none';
+                    testResultsElement.appendChild(marker);
+                    
+                    // Update the test progress
+                    updateTestProgress();
+                }
+                
+                if (correctCount === totalFields) {
+                    resultContainerElement.className = 'p-4 rounded-lg bg-green-100 text-green-800';
+                    resultMessageElement.textContent = 'Perfect! All answers are correct!';
+                    correctionsElement.innerHTML = '';
+                } else if (correctCount > 0 || partialCount > 0) {
+                    resultContainerElement.className = 'p-4 rounded-lg bg-yellow-100 text-yellow-800';
+                    resultMessageElement.textContent = `Partially correct! You got ${correctCount} fully correct and ${partialCount} partially correct.`;
+                    correctionsElement.innerHTML = '';
+                    
+                    if (!baseCorrect) {
+                        addCorrection(`Base Form: ${currentVerb.baseForm}`);
+                    }
+                    if (!presentExactMatch) {
+                        addCorrection(`Simple Present: ${currentVerb.simplePresent}`);
+                    }
+                    if (!pastCorrect) {
+                        addCorrection(`Simple Past: ${currentVerb.simplePast}`);
+                    }
+                    if (!participleCorrect) {
+                        addCorrection(`Past Participle: ${currentVerb.pastParticiple}`);
+                    }
+                } else {
+                    resultContainerElement.className = 'p-4 rounded-lg bg-red-100 text-red-800';
+                    resultMessageElement.textContent = 'Try again! Here are the correct answers:';
+                    correctionsElement.innerHTML = '';
+                    
+                    addCorrection(`Base Form: ${currentVerb.baseForm}`);
+                    addCorrection(`Simple Present: ${currentVerb.simplePresent}`);
+                    addCorrection(`Simple Past: ${currentVerb.simplePast}`);
+                    addCorrection(`Past Participle: ${currentVerb.pastParticiple}`);
+                }
+            }
+            
+            function addCorrection(text) {
+                const p = document.createElement('p');
+                p.textContent = text;
+                p.className = 'text-sm font-medium';
+                correctionsElement.appendChild(p);
+            }
+            
+            function nextQuestion() {
+                if (currentTestIndex < testVerbs.length - 1) {
+                    currentTestIndex++;
+                    updateTestQuestion();
+                } else {
+                    const finalScore = Math.round((testScore / testVerbs.length) * 100);
+                    let message = `Test complete! Your score is ${testScore}/${testVerbs.length} (${finalScore}%).\n\n`;
+                    
+                    if (finalScore >= 90) {
+                        message += "Excellent! You've mastered these verbs!";
+                    } else if (finalScore >= 70) {
+                        message += "Good job! Keep practicing to improve further.";
+                    } else {
+                        message += "Keep practicing! You'll get better with time.";
+                    }
+                    
+                    alert(message);
+                    
+                    // Reset test
+                    currentTestIndex = 0;
+                    testScore = 0;
+                    answeredQuestions.clear();
+                    shuffleArray(testVerbs);
+                    updateTestQuestion();
+                }
+            }
+            
+            function createEmojiMatchCards() {
+                // Clear container
+                emojiMatchContainer.innerHTML = '';
+                
+                // Filter out mastered verbs to get available verbs
+                const availableVerbs = verbs.filter(verb => !masteredVerbs.has(verb.name));
+                
+                // If all verbs are mastered, show a congratulations message
+                if (availableVerbs.length === 0) {
+                    emojiMatchContainer.innerHTML = `
+                        <div class="text-center p-8 bg-green-50 rounded-lg">
+                            <h3 class="text-2xl font-bold text-green-600 mb-4">Congratulations! 🎉</h3>
+                            <p class="text-lg">You've mastered all the verbs!</p>
+                            <button id="reset-mastered" class="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                                Reset Mastered Verbs
+                            </button>
+                        </div>
+                    `;
+                    
+                    document.getElementById('reset-mastered').addEventListener('click', function() {
+                        masteredVerbs.clear();
+                        updateMasteredVerbsDisplay();
+                        createEmojiMatchCards();
+                    });
+                    
+                    return;
+                }
+                
+                // Get 5 random verbs for the match game (or fewer if less are available)
+                const matchVerbs = [...availableVerbs];
+                shuffleArray(matchVerbs);
+                const selectedVerbs = matchVerbs.slice(0, Math.min(5, matchVerbs.length));
+                
+                // Create arrays for each column with correct answers and distractors
+                const presentOptions = [];
+                const pastOptions = [];
+                const participleOptions = [];
+                
+                // Add correct answers
+                selectedVerbs.forEach(verb => {
+                    // Get the first form if multiple are available
+                    const presentForm = verb.simplePresent.split('/')[0];
+                    const pastForm = verb.simplePast.split('/')[0];
+                    const participleForm = verb.pastParticiple.split('/')[0];
+                    
+                    presentOptions.push({ verb: verb.name, form: presentForm });
+                    pastOptions.push({ verb: verb.name, form: pastForm });
+                    participleOptions.push({ verb: verb.name, form: participleForm });
+                });
+                
+                // Shuffle options
+                shuffleArray(presentOptions);
+                shuffleArray(pastOptions);
+                shuffleArray(participleOptions);
+                
+                // Create a card for each verb
+                selectedVerbs.forEach((verb, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'emoji-match-card';
+                    card.dataset.verb = verb.name;
+                    
+                    const cardContent = `
+                        <div class="emoji-large">${verb.emoji}</div>
+                        <div class="text-center mb-4">
+                            <h3 class="text-xl font-bold">${verb.name}</h3>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-600 mb-2">Simple Present</h4>
+                                <div class="present-options" data-verb="${verb.name}">
+                                    ${presentOptions.map(option => `
+                                        <button class="option-button present-option" data-verb="${option.verb}" data-form="${option.form}">
+                                            ${option.form}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-600 mb-2">Simple Past</h4>
+                                <div class="past-options" data-verb="${verb.name}">
+                                    ${pastOptions.map(option => `
+                                        <button class="option-button past-option" data-verb="${option.verb}" data-form="${option.form}">
+                                            ${option.form}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-600 mb-2">Past Participle</h4>
+                                <div class="participle-options" data-verb="${verb.name}">
+                                    ${participleOptions.map(option => `
+                                        <button class="option-button participle-option" data-verb="${option.verb}" data-form="${option.form}">
+                                            ${option.form}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.innerHTML = cardContent;
+                    emojiMatchContainer.appendChild(card);
+                });
+                
+                // Add event listeners to options
+                document.querySelectorAll('.present-option').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const parentContainer = this.closest('.present-options');
+                        parentContainer.querySelectorAll('.option-button').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                });
+                
+                document.querySelectorAll('.past-option').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const parentContainer = this.closest('.past-options');
+                        parentContainer.querySelectorAll('.option-button').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                });
+                
+                document.querySelectorAll('.participle-option').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const parentContainer = this.closest('.participle-options');
+                        parentContainer.querySelectorAll('.option-button').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                    });
+                });
+            }
+            
+            function checkMatches() {
+                let correctMatches = 0;
+                const cards = document.querySelectorAll('.emoji-match-card');
+                const newlyMasteredVerbs = new Set();
+                
+                cards.forEach(card => {
+                    const cardVerb = card.dataset.verb;
+                    const verbData = verbs.find(v => v.name === cardVerb);
+                    let cardCorrect = true;
+                    
+                    // Check present tense
+                    const selectedPresent = card.querySelector('.present-options .selected');
+                    if (selectedPresent) {
+                        const selectedPresentVerb = selectedPresent.dataset.verb;
+                        if (selectedPresentVerb === cardVerb) {
+                            selectedPresent.classList.add('correct');
+                            correctMatches++;
+                        } else {
+                            selectedPresent.classList.add('incorrect');
+                            cardCorrect = false;
+                        }
+                    } else {
+                        cardCorrect = false;
+                    }
+                    
+                    // Check past tense
+                    const selectedPast = card.querySelector('.past-options .selected');
+                    if (selectedPast) {
+                        const selectedPastVerb = selectedPast.dataset.verb;
+                        if (selectedPastVerb === cardVerb) {
+                            selectedPast.classList.add('correct');
+                            correctMatches++;
+                        } else {
+                            selectedPast.classList.add('incorrect');
+                            cardCorrect = false;
+                        }
+                    } else {
+                        cardCorrect = false;
+                    }
+                    
+                    // Check participle
+                    const selectedParticiple = card.querySelector('.participle-options .selected');
+                    if (selectedParticiple) {
+                        const selectedParticipleVerb = selectedParticiple.dataset.verb;
+                        if (selectedParticipleVerb === cardVerb) {
+                            selectedParticiple.classList.add('correct');
+                            correctMatches++;
+                        } else {
+                            selectedParticiple.classList.add('incorrect');
+                            cardCorrect = false;
+                        }
+                    } else {
+                        cardCorrect = false;
+                    }
+                    
+                    // If all three forms are correct, mark the verb as mastered
+                    if (cardCorrect) {
+                        masteredVerbs.add(cardVerb);
+                        newlyMasteredVerbs.add(cardVerb);
+                        
+                        // Add a mastered badge to the card
+                        const cardTitle = card.querySelector('h3');
+                        if (!cardTitle.querySelector('.mastered-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'mastered-badge';
+                            badge.textContent = 'Mastered';
+                            cardTitle.appendChild(badge);
+                        }
+                    }
+                });
+                
+                // Update score
+                matchScore += correctMatches;
+                matchScoreElement.textContent = matchScore;
+                
+                // Update mastered verbs display
+                updateMasteredVerbsDisplay();
+                
+                // Disable all buttons
+                document.querySelectorAll('.option-button').forEach(button => {
+                    button.disabled = true;
+                });
+                
+                // Show correct answers
+                cards.forEach(card => {
+                    const cardVerb = card.dataset.verb;
+                    
+                    // Highlight correct answers that weren't selected
+                    card.querySelectorAll('.option-button').forEach(button => {
+                        if (button.dataset.verb === cardVerb && !button.classList.contains('selected')) {
+                            button.classList.add('correct');
+                        }
+                    });
+                });
+                
+                // Disable check button
+                checkMatchesButton.disabled = true;
+                
+                // Show congratulations if new verbs were mastered
+                if (newlyMasteredVerbs.size > 0) {
+                    const verbNames = Array.from(newlyMasteredVerbs).join(', ');
+                    setTimeout(() => {
+                        alert(`Congratulations! You've mastered ${newlyMasteredVerbs.size} new verb${newlyMasteredVerbs.size > 1 ? 's' : ''}: ${verbNames}`);
+                    }, 500);
+                }
+            }
+            
+            function updateMasteredVerbsDisplay() {
+                masteredVerbsElement.innerHTML = '';
+                
+                if (masteredVerbs.size === 0) {
+                    masteredVerbsElement.innerHTML = '<p class="text-gray-500 italic">Complete matches correctly to master verbs</p>';
+                    return;
+                }
+                
+                masteredVerbs.forEach(verbName => {
+                    const verb = verbs.find(v => v.name === verbName);
+                    if (verb) {
+                        const verbChip = document.createElement('div');
+                        verbChip.className = 'px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center';
+                        verbChip.innerHTML = `${verb.emoji} <span class="ml-1">${verb.name}</span>`;
+                        masteredVerbsElement.appendChild(verbChip);
+                    }
+                });
+            }
+            
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            
+            // Event Listeners
+            flashcardElement.addEventListener('click', function() {
+                flashcardElement.classList.toggle('flipped');
+            });
+            
+            prevButton.addEventListener('click', function() {
+                if (currentCardIndex > 0) {
+                    currentCardIndex--;
+                    updateCard();
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                if (currentCardIndex < verbs.length - 1) {
+                    currentCardIndex++;
+                    updateCard();
+                }
+            });
+            
+            markKnownButton.addEventListener('click', function() {
+                if (!knownCards.has(currentCardIndex)) {
+                    knownCards.add(currentCardIndex);
+                    score += 10;
+                    
+                    // Add bounce animation to score
+                    scoreElement.classList.add('bounce');
+                    setTimeout(() => {
+                        scoreElement.classList.remove('bounce');
+                    }, 1000);
+                    
+                    updateButtons();
+                    updateProgress();
+                    
+                    // Move to next card if available
+                    if (currentCardIndex < verbs.length - 1) {
+                        setTimeout(() => {
+                            currentCardIndex++;
+                            updateCard();
+                        }, 800);
+                    }
+                }
+            });
+            
+            resetButton.addEventListener('click', function() {
+                if (confirm("Are you sure you want to reset your progress?")) {
+                    currentCardIndex = 0;
+                    score = 0;
+                    knownCards.clear();
+                    updateCard();
+                }
+            });
+            
+            // Test event listeners
+            checkAnswerButton.addEventListener('click', checkAnswer);
+            nextQuestionButton.addEventListener('click', nextQuestion);
+            
+            // Match event listeners
+            checkMatchesButton.addEventListener('click', checkMatches);
+            newMatchesButton.addEventListener('click', function() {
+                checkMatchesButton.disabled = false;
+                createEmojiMatchCards();
+            });
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (document.activeElement.tagName !== 'INPUT') {
+                    if (e.key === 'ArrowLeft') {
+                        if (currentCardIndex > 0) {
+                            currentCardIndex--;
+                            updateCard();
+                        }
+                    } else if (e.key === 'ArrowRight') {
+                        if (currentCardIndex < verbs.length - 1) {
+                            currentCardIndex++;
+                            updateCard();
+                        }
+                    } else if (e.key === ' ' || e.key === 'Enter') {
+                        flashcardElement.classList.toggle('flipped');
+                    }
+                }
+            });
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show active content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-content`) {
+                            content.classList.add('active');
+                        }
+                    });
+                    
+                    // Initialize emoji match if that tab is selected
+                    if (tabId === 'match' && emojiMatchContainer.children.length === 0) {
+                        createEmojiMatchCards();
+                    }
+                });
+            });
+            
+            // Initialize
+            updateCard();
+            updateTestQuestion();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e3cb8d10fc2089',t:'MTc1NzcyNjE0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
