@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irregular Verbs - Same Pattern Flashcards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            height: 300px;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                🎯 Irregular Verbs Flashcards
+            </h1>
+            <p class="text-xl text-white opacity-90">Master verbs with the same pattern: Present = Past = Past Participle</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-4 lg:p-6 mb-8">
+            <div class="flex flex-wrap justify-center gap-2 lg:gap-4">
+                <button onclick="showSection('example')" class="nav-btn btn-primary text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full font-semibold text-sm lg:text-base active">
+                    📚 Learn with Examples
+                </button>
+                <button onclick="showSection('practice')" class="nav-btn bg-white/20 text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full font-semibold text-sm lg:text-base">
+                    🎮 Practice Mode
+                </button>
+                <button onclick="showSection('test')" class="nav-btn bg-white/20 text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full font-semibold text-sm lg:text-base">
+                    🏆 Test Yourself
+                </button>
+            </div>
+        </div>
+
+        <!-- Example Section -->
+        <div id="example" class="section active">
+            <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">📚 Learn with Examples</h2>
+                <p class="text-lg text-gray-600 mb-8 text-center">Click the card to see the verb forms and example sentences!</p>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <!-- Visual Illustration -->
+                        <div class="text-center">
+                            <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 mb-4">
+                                <div class="text-8xl mb-4" id="exampleIcon">✂️</div>
+                                <div class="text-lg font-semibold text-gray-700" id="exampleAction">Cutting Action</div>
+                            </div>
+                            <div class="text-sm text-gray-600">Visual representation of the verb</div>
+                        </div>
+                        
+                        <!-- Flashcard -->
+                        <div class="max-w-md mx-auto">
+                            <div class="card-container">
+                                <div class="flashcard" id="exampleCard" onclick="flipCard('exampleCard')">
+                                    <div class="card-face card-front">
+                                        <div class="text-4xl font-bold mb-4" id="exampleVerb">CUT</div>
+                                        <div class="text-lg opacity-80">Click to see forms & examples</div>
+                                    </div>
+                                    <div class="card-face card-back">
+                                        <div class="text-2xl font-bold mb-4" id="exampleForms">CUT - CUT - CUT</div>
+                                        <div class="text-sm space-y-2" id="exampleSentences">
+                                            <div>Present: I cut vegetables daily</div>
+                                            <div>Past: I cut my finger yesterday</div>
+                                            <div>Past Participle: I have cut the paper</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center gap-4 mt-6">
+                                <button onclick="previousExample()" class="btn-primary text-white px-6 py-3 rounded-full font-semibold">
+                                    ← Previous
+                                </button>
+                                <button onclick="nextExample()" class="btn-primary text-white px-6 py-3 rounded-full font-semibold">
+                                    Next →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Section -->
+        <div id="practice" class="section">
+            <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">🎮 Challenge Practice Mode</h2>
+                <p class="text-lg text-gray-600 mb-8 text-center">Match the verb to the image and complete the sentences. Beat the timer to earn bonus points!</p>
+                
+                <!-- Challenge Stats -->
+                <div class="flex flex-wrap justify-center gap-4 lg:gap-8 mb-8">
+                    <div class="text-center">
+                        <svg class="progress-ring w-16 h-16 lg:w-20 lg:h-20" width="80" height="80">
+                            <circle class="text-gray-300" stroke-width="6" stroke="currentColor" fill="transparent" r="32" cx="40" cy="40"/>
+                            <circle class="progress-ring-circle text-blue-600" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" stroke="currentColor" fill="transparent" r="32" cx="40" cy="40" id="practiceProgress"/>
+                        </svg>
+                        <div class="mt-2">
+                            <div class="text-lg lg:text-xl font-bold text-gray-800" id="practiceScore">0/15</div>
+                            <div class="text-xs text-gray-600">Progress</div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl lg:text-3xl font-bold text-green-600" id="practiceStreak">0</div>
+                        <div class="text-xs text-gray-600">Streak</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl lg:text-3xl font-bold text-orange-500" id="practiceTimer">30</div>
+                        <div class="text-xs text-gray-600">Seconds</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl lg:text-3xl font-bold text-purple-600" id="practiceLevel">1</div>
+                        <div class="text-xs text-gray-600">Level</div>
+                    </div>
+                </div>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+                        <!-- Visual Challenge -->
+                        <div class="text-center order-2 lg:order-1">
+                            <div class="bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl p-6 lg:p-8 mb-4 relative">
+                                <div class="text-4xl lg:text-6xl mb-4" id="practiceIcon">🤕</div>
+                                <div class="text-base lg:text-lg font-semibold text-gray-700" id="practiceAction">Pain/Injury Action</div>
+                                <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold" id="difficultyBadge">
+                                    EASY
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600">Match the verb to the image!</div>
+                        </div>
+                        
+                        <!-- Challenge Question -->
+                        <div class="max-w-md mx-auto order-1 lg:order-2">
+                            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-4 lg:p-6 mb-6 border-2 border-dashed border-orange-300">
+                                <h3 class="text-lg lg:text-xl font-bold text-gray-800 mb-4 text-center">Complete the sentence:</h3>
+                                <div class="text-base lg:text-lg text-gray-700 bg-white p-3 lg:p-4 rounded-xl text-center" id="practiceSentence">
+                                    "My back _____ yesterday and it still _____ today"
+                                </div>
+                            </div>
+                            
+                            <!-- Multiple Choice Options -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="practiceOptions">
+                                <!-- Options will be generated here -->
+                            </div>
+                            
+                            <!-- Feedback Area -->
+                            <div class="text-center" id="practiceFeedback" style="display: none;">
+                                <div class="text-xl font-semibold mb-4" id="practiceFeedbackText"></div>
+                                <button onclick="nextPracticeQuestion()" class="btn-primary text-white px-6 py-3 rounded-full font-semibold">
+                                    Next Challenge →
+                                </button>
+                            </div>
+                            
+                            <!-- Hint System -->
+                            <div class="text-center mt-4">
+                                <button onclick="getHint()" class="text-blue-600 hover:text-blue-800 font-medium" id="hintBtn">
+                                    💡 Need a hint? (-5 points)
+                                </button>
+                                <div class="mt-2 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg" id="hintText" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section -->
+        <div id="test" class="section">
+            <div class="bg-white/95 backdrop-blur-lg rounded-2xl p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">🏆 Test Yourself</h2>
+                
+                <!-- Test Stats -->
+                <div class="flex justify-center gap-8 mb-8">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="testScore">0</div>
+                        <div class="text-sm text-gray-600">Score</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600" id="testCorrect">0</div>
+                        <div class="text-sm text-gray-600">Correct</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-red-500" id="testWrong">0</div>
+                        <div class="text-sm text-gray-600">Wrong</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-600" id="testQuestion">1/10</div>
+                        <div class="text-sm text-gray-600">Question</div>
+                    </div>
+                </div>
+                
+                <!-- Test Question -->
+                <div class="max-w-2xl mx-auto" id="testArea">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Complete the sentence:</h3>
+                        <div class="text-xl text-gray-700 bg-gray-50 p-6 rounded-xl" id="testSentence">
+                            Loading question...
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="testOptions">
+                        <!-- Options will be generated here -->
+                    </div>
+                    
+                    <div class="text-center" id="testFeedback" style="display: none;">
+                        <div class="text-xl font-semibold mb-4" id="feedbackText"></div>
+                        <button onclick="nextTestQuestion()" class="btn-primary text-white px-8 py-3 rounded-full font-semibold">
+                            Next Question →
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Test Results -->
+                <div class="text-center" id="testResults" style="display: none;">
+                    <div class="text-6xl mb-4" id="resultEmoji">🎉</div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4" id="resultTitle">Test Complete!</h3>
+                    <div class="text-xl text-gray-600 mb-6" id="resultMessage"></div>
+                    <button onclick="restartTest()" class="btn-primary text-white px-8 py-3 rounded-full font-semibold">
+                        🔄 Take Test Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Irregular verbs with same pattern (Present = Past = Past Participle)
+        const samePatternVerbs = [
+            {
+                verb: "cut",
+                forms: "cut - cut - cut",
+                sentences: [
+                    "I cut vegetables every day.",
+                    "I cut my finger yesterday.",
+                    "I have cut the paper already."
+                ],
+                hint: "This verb means to divide or separate with a sharp tool",
+                icon: "✂️",
+                action: "Cutting Action"
+            },
+            {
+                verb: "hurt",
+                forms: "hurt - hurt - hurt", 
+                sentences: [
+                    "My back hurts when I sit too long.",
+                    "I hurt my knee playing soccer.",
+                    "Have you ever hurt yourself badly?"
+                ],
+                hint: "This verb means to cause pain or injury",
+                icon: "🤕",
+                action: "Pain/Injury Action"
+            },
+            {
+                verb: "put",
+                forms: "put - put - put",
+                sentences: [
+                    "I put my keys on the table.",
+                    "She put the book on the shelf.",
+                    "Where have you put my glasses?"
+                ],
+                hint: "This verb means to place something somewhere",
+                icon: "📦",
+                action: "Placing Action"
+            },
+            {
+                verb: "let",
+                forms: "let - let - let",
+                sentences: [
+                    "Please let me help you.",
+                    "My parents let me stay up late.",
+                    "Have you let him know about the meeting?"
+                ],
+                hint: "This verb means to allow or permit",
+                icon: "✅",
+                action: "Permission Action"
+            },
+            {
+                verb: "set",
+                forms: "set - set - set",
+                sentences: [
+                    "I set my alarm for 7 AM.",
+                    "She set the table for dinner.",
+                    "The sun has set behind the mountains."
+                ],
+                hint: "This verb means to place or arrange something",
+                icon: "⚙️",
+                action: "Setting Action"
+            },
+            {
+                verb: "hit",
+                forms: "hit - hit - hit",
+                sentences: [
+                    "Don't hit your brother!",
+                    "The ball hit the window.",
+                    "Have you ever hit a home run?"
+                ],
+                hint: "This verb means to strike or make contact with force",
+                icon: "👊",
+                action: "Striking Action"
+            },
+            {
+                verb: "shut",
+                forms: "shut - shut - shut",
+                sentences: [
+                    "Please shut the door.",
+                    "I shut the window because it was cold.",
+                    "The store has shut down permanently."
+                ],
+                hint: "This verb means to close something",
+                icon: "🚪",
+                action: "Closing Action"
+            },
+            {
+                verb: "cost",
+                forms: "cost - cost - cost",
+                sentences: [
+                    "This shirt costs $20.",
+                    "The repair cost more than expected.",
+                    "How much has this project cost so far?"
+                ],
+                hint: "This verb relates to the price of something",
+                icon: "💰",
+                action: "Price Action"
+            },
+            {
+                verb: "bet",
+                forms: "bet - bet - bet",
+                sentences: [
+                    "I bet it will rain tomorrow.",
+                    "He bet all his money on the horse.",
+                    "Have you ever bet on a sports game?"
+                ],
+                hint: "This verb means to wager or make a prediction",
+                icon: "🎲",
+                action: "Betting Action"
+            },
+            {
+                verb: "split",
+                forms: "split - split - split",
+                sentences: [
+                    "Let's split the bill.",
+                    "The wood split when I hit it.",
+                    "We have split the work between us."
+                ],
+                hint: "This verb means to divide or separate into parts",
+                icon: "🪓",
+                action: "Splitting Action"
+            },
+            {
+                verb: "quit",
+                forms: "quit - quit - quit",
+                sentences: [
+                    "I want to quit smoking.",
+                    "She quit her job last month.",
+                    "Have you quit playing that game?"
+                ],
+                hint: "This verb means to stop doing something",
+                icon: "🚫",
+                action: "Stopping Action"
+            },
+            {
+                verb: "spread",
+                forms: "spread - spread - spread",
+                sentences: [
+                    "I spread butter on my toast.",
+                    "The news spread quickly.",
+                    "The fire has spread to other buildings."
+                ],
+                hint: "This verb means to extend over a larger area",
+                icon: "🧈",
+                action: "Spreading Action"
+            },
+            {
+                verb: "burst",
+                forms: "burst - burst - burst",
+                sentences: [
+                    "Balloons burst easily.",
+                    "The pipe burst during the freeze.",
+                    "The bubble has burst."
+                ],
+                hint: "This verb means to break open suddenly",
+                icon: "🎈",
+                action: "Bursting Action"
+            },
+            {
+                verb: "cast",
+                forms: "cast - cast - cast",
+                sentences: [
+                    "Fishermen cast their lines into the water.",
+                    "She cast her vote in the election.",
+                    "The die has been cast."
+                ],
+                hint: "This verb means to throw or project something",
+                icon: "🎣",
+                action: "Casting Action"
+            },
+            {
+                verb: "fit",
+                forms: "fit - fit - fit",
+                sentences: [
+                    "These shoes fit perfectly.",
+                    "The key fit the lock.",
+                    "This piece has fit into the puzzle."
+                ],
+                hint: "This verb means to be the right size or shape",
+                icon: "👟",
+                action: "Fitting Action"
+            }
+        ];
+
+        // Game state
+        let currentSection = 'example';
+        let exampleIndex = 0;
+        let practiceIndex = 0;
+        let practiceCorrect = 0;
+        let practiceTotal = 0;
+        let practiceStreak = 0;
+        let practiceLevel = 1;
+        let practiceTimer = 30;
+        let practiceTimerInterval = null;
+        let practiceQuestions = [];
+        let practiceScore = 0;
+        let testQuestionIndex = 0;
+        let testScore = 0;
+        let testCorrect = 0;
+        let testWrong = 0;
+        let testQuestions = [];
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn bg-white/20 text-white px-6 py-3 rounded-full font-semibold';
+            });
+            
+            // Show selected section
+            document.getElementById(section).classList.add('active');
+            event.target.className = 'nav-btn btn-primary text-white px-6 py-3 rounded-full font-semibold active';
+            currentSection = section;
+            
+            // Initialize section
+            if (section === 'practice') {
+                initPractice();
+            } else if (section === 'test') {
+                initTest();
+            }
+        }
+
+        // Card flip animation
+        function flipCard(cardId) {
+            const card = document.getElementById(cardId);
+            card.classList.toggle('flipped');
+        }
+
+        // Example section functions
+        function updateExample() {
+            const verb = samePatternVerbs[exampleIndex];
+            document.getElementById('exampleVerb').textContent = verb.verb.toUpperCase();
+            document.getElementById('exampleIcon').textContent = verb.icon;
+            document.getElementById('exampleAction').textContent = verb.action;
+            document.getElementById('exampleForms').textContent = verb.forms.toUpperCase();
+            document.getElementById('exampleSentences').innerHTML = `
+                <div><strong>Present:</strong> ${verb.sentences[0]}</div>
+                <div><strong>Past:</strong> ${verb.sentences[1]}</div>
+                <div><strong>Past Participle:</strong> ${verb.sentences[2]}</div>
+            `;
+            
+            // Reset card flip
+            document.getElementById('exampleCard').classList.remove('flipped');
+        }
+
+        function nextExample() {
+            exampleIndex = (exampleIndex + 1) % samePatternVerbs.length;
+            updateExample();
+        }
+
+        function previousExample() {
+            exampleIndex = (exampleIndex - 1 + samePatternVerbs.length) % samePatternVerbs.length;
+            updateExample();
+        }
+
+        // Practice section functions
+        function initPractice() {
+            practiceIndex = 0;
+            practiceCorrect = 0;
+            practiceTotal = 0;
+            practiceStreak = 0;
+            practiceLevel = 1;
+            practiceScore = 0;
+            practiceTimer = 30;
+            
+            // Generate practice questions
+            practiceQuestions = [];
+            const shuffledVerbs = [...samePatternVerbs].sort(() => Math.random() - 0.5);
+            
+            shuffledVerbs.forEach(verb => {
+                // Create different types of challenges
+                const challengeTypes = [
+                    {
+                        sentence: verb.sentences[1].replace(verb.verb, '_____'),
+                        correctAnswer: verb.verb,
+                        type: 'fill'
+                    },
+                    {
+                        sentence: `Complete: "${verb.verb} - _____ - _____"`,
+                        correctAnswer: verb.verb,
+                        type: 'forms'
+                    }
+                ];
+                
+                const challenge = challengeTypes[Math.floor(Math.random() * challengeTypes.length)];
+                
+                // Create wrong options
+                const wrongOptions = samePatternVerbs
+                    .filter(v => v.verb !== verb.verb)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3)
+                    .map(v => v.verb);
+                
+                practiceQuestions.push({
+                    ...challenge,
+                    verb: verb,
+                    options: [verb.verb, ...wrongOptions].sort(() => Math.random() - 0.5)
+                });
+            });
+            
+            updatePracticeStats();
+            showPracticeQuestion();
+            startPracticeTimer();
+        }
+
+        function showPracticeQuestion() {
+            if (practiceIndex >= practiceQuestions.length) {
+                completePractice();
+                return;
+            }
+            
+            const question = practiceQuestions[practiceIndex];
+            const verb = question.verb;
+            
+            // Update visual elements
+            document.getElementById('practiceIcon').textContent = verb.icon;
+            document.getElementById('practiceAction').textContent = verb.action;
+            document.getElementById('practiceSentence').textContent = question.sentence;
+            
+            // Update difficulty badge
+            const difficulty = practiceLevel <= 2 ? 'EASY' : practiceLevel <= 4 ? 'MEDIUM' : 'HARD';
+            const badgeColors = {
+                'EASY': 'bg-green-500',
+                'MEDIUM': 'bg-yellow-500', 
+                'HARD': 'bg-red-500'
+            };
+            document.getElementById('difficultyBadge').textContent = difficulty;
+            document.getElementById('difficultyBadge').className = `absolute top-2 right-2 ${badgeColors[difficulty]} text-white px-2 py-1 rounded-full text-xs font-bold`;
+            
+            // Generate options
+            const optionsContainer = document.getElementById('practiceOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 p-3 rounded-xl text-sm font-medium transition-all duration-200 transform hover:scale-105';
+                button.textContent = option;
+                button.onclick = () => selectPracticeAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Reset feedback and hint
+            document.getElementById('practiceFeedback').style.display = 'none';
+            document.getElementById('hintText').style.display = 'none';
+            document.getElementById('hintBtn').style.display = 'block';
+        }
+
+        function selectPracticeAnswer(selectedAnswer, buttonElement) {
+            const question = practiceQuestions[practiceIndex];
+            const isCorrect = selectedAnswer === question.correctAnswer;
+            
+            // Stop timer
+            clearInterval(practiceTimerInterval);
+            
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#practiceOptions button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                buttonElement.className += ' bg-green-500 text-white bounce-in';
+                practiceCorrect++;
+                practiceStreak++;
+                
+                // Calculate points based on level and time
+                const timeBonus = Math.max(0, practiceTimer - 10);
+                const levelBonus = practiceLevel * 5;
+                const streakBonus = Math.min(practiceStreak * 2, 20);
+                const points = 10 + timeBonus + levelBonus + streakBonus;
+                practiceScore += points;
+                
+                document.getElementById('practiceFeedbackText').innerHTML = `
+                    <div class="text-green-600 text-xl">✅ Correct! +${points} points</div>
+                    <div class="text-sm text-gray-600 mt-2">
+                        Base: 10 | Time: +${timeBonus} | Level: +${levelBonus} | Streak: +${streakBonus}
+                    </div>
+                `;
+                
+                // Level up every 5 correct answers
+                if (practiceCorrect % 5 === 0) {
+                    practiceLevel++;
+                }
+            } else {
+                buttonElement.className += ' bg-red-500 text-white';
+                practiceStreak = 0;
+                
+                // Highlight correct answer
+                buttons.forEach(btn => {
+                    if (btn.textContent === question.correctAnswer) {
+                        btn.className += ' bg-green-500 text-white bounce-in';
+                    }
+                });
+                
+                document.getElementById('practiceFeedbackText').innerHTML = `
+                    <div class="text-red-600 text-xl">❌ Incorrect</div>
+                    <div class="text-sm text-gray-600 mt-2">
+                        Correct answer: <strong>${question.correctAnswer}</strong><br>
+                        ${question.verb.forms}
+                    </div>
+                `;
+            }
+            
+            practiceTotal++;
+            updatePracticeStats();
+            document.getElementById('practiceFeedback').style.display = 'block';
+        }
+
+        function nextPracticeQuestion() {
+            practiceIndex++;
+            practiceTimer = Math.max(15, 30 - practiceLevel * 2); // Timer gets shorter as level increases
+            showPracticeQuestion();
+            startPracticeTimer();
+        }
+
+        function startPracticeTimer() {
+            practiceTimerInterval = setInterval(() => {
+                practiceTimer--;
+                document.getElementById('practiceTimer').textContent = practiceTimer;
+                
+                if (practiceTimer <= 0) {
+                    // Time's up - auto select wrong answer
+                    clearInterval(practiceTimerInterval);
+                    const buttons = document.querySelectorAll('#practiceOptions button');
+                    if (buttons.length > 0) {
+                        // Find a wrong answer to auto-select
+                        const question = practiceQuestions[practiceIndex];
+                        const wrongButton = Array.from(buttons).find(btn => btn.textContent !== question.correctAnswer);
+                        if (wrongButton) {
+                            selectPracticeAnswer(wrongButton.textContent, wrongButton);
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        function updatePracticeStats() {
+            const progress = (practiceCorrect / Math.max(practiceTotal, 1)) * 100;
+            const circumference = 2 * Math.PI * 32;
+            const offset = circumference - (progress / 100) * circumference;
+            
+            document.getElementById('practiceProgress').style.strokeDashoffset = offset;
+            document.getElementById('practiceScore').textContent = `${practiceCorrect}/${practiceTotal}`;
+            document.getElementById('practiceStreak').textContent = practiceStreak;
+            document.getElementById('practiceLevel').textContent = practiceLevel;
+            document.getElementById('practiceTimer').textContent = practiceTimer;
+        }
+
+        function completePractice() {
+            clearInterval(practiceTimerInterval);
+            const percentage = (practiceCorrect / practiceTotal) * 100;
+            let message = `Practice Complete!\n\nScore: ${practiceScore} points\nCorrect: ${practiceCorrect}/${practiceTotal} (${percentage.toFixed(1)}%)\nHighest Level: ${practiceLevel}\nBest Streak: ${Math.max(...Array.from({length: practiceTotal}, (_, i) => practiceStreak))}`;
+            
+            alert(message);
+            initPractice();
+        }
+
+        function getHint() {
+            const question = practiceQuestions[practiceIndex];
+            practiceScore = Math.max(0, practiceScore - 5); // Penalty for hint
+            document.getElementById('hintText').textContent = question.verb.hint;
+            document.getElementById('hintText').style.display = 'block';
+            document.getElementById('hintBtn').style.display = 'none';
+            updatePracticeStats();
+        }
+
+        // Test section functions
+        function initTest() {
+            testQuestionIndex = 0;
+            testScore = 0;
+            testCorrect = 0;
+            testWrong = 0;
+            
+            // Generate test questions
+            testQuestions = [];
+            const shuffledVerbs = [...samePatternVerbs].sort(() => Math.random() - 0.5).slice(0, 10);
+            
+            shuffledVerbs.forEach(verb => {
+                const sentenceIndex = Math.floor(Math.random() * verb.sentences.length);
+                const sentence = verb.sentences[sentenceIndex].replace(verb.verb, '______');
+                
+                // Create wrong options from other verbs
+                const wrongOptions = samePatternVerbs
+                    .filter(v => v.verb !== verb.verb)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3)
+                    .map(v => v.verb);
+                
+                const options = [verb.verb, ...wrongOptions].sort(() => Math.random() - 0.5);
+                
+                testQuestions.push({
+                    sentence: sentence,
+                    correctAnswer: verb.verb,
+                    options: options,
+                    verb: verb
+                });
+            });
+            
+            document.getElementById('testArea').style.display = 'block';
+            document.getElementById('testResults').style.display = 'none';
+            updateTestStats();
+            showTestQuestion();
+        }
+
+        function showTestQuestion() {
+            if (testQuestionIndex >= testQuestions.length) {
+                showTestResults();
+                return;
+            }
+            
+            const question = testQuestions[testQuestionIndex];
+            document.getElementById('testSentence').textContent = question.sentence;
+            document.getElementById('testQuestion').textContent = `${testQuestionIndex + 1}/10`;
+            
+            const optionsContainer = document.getElementById('testOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 p-4 rounded-xl text-lg font-medium transition-all duration-200 transform hover:scale-105';
+                button.textContent = option;
+                button.onclick = () => selectTestAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+            
+            document.getElementById('testFeedback').style.display = 'none';
+        }
+
+        function selectTestAnswer(selectedAnswer, buttonElement) {
+            const question = testQuestions[testQuestionIndex];
+            const isCorrect = selectedAnswer === question.correctAnswer;
+            
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#testOptions button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                buttonElement.className += ' bg-green-500 text-white bounce-in';
+                testScore += 10;
+                testCorrect++;
+                document.getElementById('feedbackText').innerHTML = `
+                    <div class="text-green-600 text-2xl">✅ Correct!</div>
+                    <div class="text-gray-600 mt-2">${question.verb.forms}</div>
+                `;
+            } else {
+                buttonElement.className += ' bg-red-500 text-white';
+                testWrong++;
+                
+                // Highlight correct answer
+                buttons.forEach(btn => {
+                    if (btn.textContent === question.correctAnswer) {
+                        btn.className += ' bg-green-500 text-white bounce-in';
+                    }
+                });
+                
+                document.getElementById('feedbackText').innerHTML = `
+                    <div class="text-red-600 text-2xl">❌ Incorrect</div>
+                    <div class="text-gray-600 mt-2">Correct: <strong>${question.correctAnswer}</strong></div>
+                    <div class="text-gray-600">${question.verb.forms}</div>
+                `;
+            }
+            
+            updateTestStats();
+            document.getElementById('testFeedback').style.display = 'block';
+        }
+
+        function nextTestQuestion() {
+            testQuestionIndex++;
+            showTestQuestion();
+        }
+
+        function updateTestStats() {
+            document.getElementById('testScore').textContent = testScore;
+            document.getElementById('testCorrect').textContent = testCorrect;
+            document.getElementById('testWrong').textContent = testWrong;
+        }
+
+        function showTestResults() {
+            document.getElementById('testArea').style.display = 'none';
+            document.getElementById('testResults').style.display = 'block';
+            
+            const percentage = (testCorrect / testQuestions.length) * 100;
+            let emoji, title, message;
+            
+            if (percentage >= 90) {
+                emoji = '🏆';
+                title = 'Outstanding!';
+                message = `Perfect! You scored ${testScore} points with ${testCorrect}/${testQuestions.length} correct answers!`;
+            } else if (percentage >= 70) {
+                emoji = '🎉';
+                title = 'Great Job!';
+                message = `Well done! You scored ${testScore} points with ${testCorrect}/${testQuestions.length} correct answers!`;
+            } else if (percentage >= 50) {
+                emoji = '👍';
+                title = 'Good Effort!';
+                message = `Not bad! You scored ${testScore} points. Keep practicing these verbs!`;
+            } else {
+                emoji = '📚';
+                title = 'Keep Learning!';
+                message = `You scored ${testScore} points. Review the examples and try again!`;
+            }
+            
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function restartTest() {
+            initTest();
+        }
+
+        // Initialize the game
+        updateExample();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983c495be79e5ea7',t:'MTc1ODY1NDA0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
